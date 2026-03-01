@@ -1,0 +1,44 @@
+            {/* 2. The Living Expense Wave (Glows intensely) */}
+            <CatmullRomLine
+                ref={lineRef}
+                points={points as any} // TypeScript might complain about Vector3 Array vs generic [x,y,z] arrays, cast to any if needed, but Vector3[] is fine
+                color={waveColor}
+                lineWidth={4}
+                curveType="catmullrom"
+                tension={0.15}
+                toneMapped={false} // Crucial for making the color values blow out into a glow
+            />
+
+            {/* 3. The Little Dent Marker (Yellow) */}
+            <Float speed={2} rotationIntensity={0} floatIntensity={0.5}>
+                <mesh position={[-2, 1.5, 0.1]}>
+                    <octahedronGeometry args={[0.15]} />
+                    <meshBasicMaterial color={[2, 2, 0]} toneMapped={false} />
+                </mesh>
+            </Float>
+
+            {/* 4. The Danger Marker & Localized Particles */}
+            {isDanger && (
+                <Float speed={4} rotationIntensity={2} floatIntensity={1}>
+                    <group position={[-0.5, -1.5, 0.1]}>
+                        {/* The Core Red Danger Node */}
+                        <mesh>
+                            <icosahedronGeometry args={[0.3, 0]} />
+                            <meshBasicMaterial color={[5, 0, 0]} wireframe toneMapped={false} />
+                        </mesh>
+                        {/* Swarm of aggressive red particles around the danger zone */}
+                        <Sparkles count={40} scale={0.5} size={0.5} speed={0.8} color={new THREE.Color(5, 0, 0)} />
+                    </group>
+                </Float>
+            )}
+
+            {/* 5. Ambient Data Particles (Floating softly through the whole chart) */}
+            <Sparkles
+                count={100}
+                scale={[12, 6, 4]}
+                position={[0, 0, -1]}
+                noise={1}
+                size={0.5}
+                speed={0.2}
+                color={isDanger ? "#fca5a5" : "#6ee7b7"}
+                opacity={0.4}

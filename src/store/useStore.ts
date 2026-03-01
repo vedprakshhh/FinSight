@@ -1,212 +1,166 @@
 import { create } from 'zustand';
 
-export interface StoreState {
-    user: {
-        name: string;
-        currentBalance: number;
-        safeToSpend: number;
-    };
-    events: any[];
-    addEvent: (newEvent: any) => void;
-    removeEvent: (eventId: string) => void;
-    clearAllEvents: () => void;
-    resolveEvent: (eventId: string, savedAmount: number) => void;
+let eventIdCounter = 100;
+
+const seedEvents = [
+  {
+    id: 'grocery-run',
+    title: 'Grocery Run 🛒',
+    start: new Date(2026, 1, 28),
+    type: 'variable',
+    predictedCost: 42,
+    status: 'expected',
+  },
+  {
+    id: 'amir-birthday',
+    title: "Amir's Birthday Dinner 🎂",
+    start: new Date(2026, 2, 1),
+    type: 'variable',
+    predictedCost: 70,
+    status: 'warning',
+  },
+  {
+    id: 'earls-dinner',
+    title: 'Earls Dinner with Friends 🍷',
+    start: new Date(2026, 2, 2),
+    type: 'variable',
+    predictedCost: 85,
+    status: 'warning',
+  },
+  {
+    id: 'payday',
+    title: 'Payday 💰',
+    start: new Date(2026, 2, 4),
+    type: 'income',
+    predictedCost: 1200,
+    status: 'safe',
+  },
+  {
+    id: 'april-rent',
+    title: 'April Rent 🏠',
+    start: new Date(2026, 2, 5),
+    type: 'fixed',
+    predictedCost: 850,
+    status: 'danger',
+  },
+  {
+    id: 'granville-night',
+    title: 'Granville Night Out 🎉',
+    start: new Date(2026, 2, 7),
+    type: 'variable',
+    predictedCost: 180,
+    status: 'warning',
+  },
+];
+
+interface User {
+  name: string;
+  currentBalance: number;
+  safeToSpend: number;
+}
+
+interface AppEvent {
+  id: string;
+  title: string;
+  start: Date;
+  type: 'income' | 'fixed' | 'variable' | 'social';
+  predictedCost: number;
+  status: 'safe' | 'expected' | 'warning' | 'danger';
+  resolved?: boolean;
+}
+
+interface StoreState {
+  user: User;
+  events: AppEvent[];
+  isFractured: boolean;
+  ghostEvents: AppEvent[];
+proposedEvents: any[];
+  addEvent: (event: Omit<AppEvent, 'id'>) => void;
+  removeEvent: (id: string) => void;
+  clearAllEvents: () => void;
+  resolveEvent: (id: string, savedAmount: number) => void;
+  fractureTimeline: () => void;
+  healTimeline: () => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
-    user: {
-        name: "Alex",
-        currentBalance: 850.00,
-        safeToSpend: 142.50,
-    },
-    events: [
-        {
-            id: "1",
-            title: "Amir's Birthday (Dinner + Gift)",
-            start: new Date(2026, 1, 28, 19, 0),
-            end: new Date(2026, 1, 28, 22, 0),
-            type: "variable",
-            predictedCost: 120,
-            status: "danger"
-        },
-        {
-            id: "2",
-            title: "March Rent",
-            start: new Date(2026, 2, 1, 9, 0),
-            end: new Date(2026, 2, 1, 9, 5),
-            type: "fixed",
-            predictedCost: 1100,
-            status: "expected"
-        },
-        {
-            id: "3",
-            title: "Payday (SFU TA Ship)",
-            start: new Date(2026, 2, 12, 9, 0),
-            end: new Date(2026, 2, 12, 9, 5),
-            type: "income",
-            predictedCost: 1150,
-            status: "safe"
-        },
-{
-  id: "4",
-  title: "BC Hydro",
-  start: new Date(2026, 2, 3, 12, 0),
-  end: new Date(2026, 2, 3, 12, 5),
-  type: "bill",
-  predictedCost: 58,
-  status: "safe"
-},
-{
-  id: "5",
-  title: "Save-On-Foods",
-  start: new Date(2026, 2, 4, 18, 30),
-  end: new Date(2026, 2, 4, 19, 30),
-  type: "essential",
-  predictedCost: 112,
-  status: "safe"
-},
-{
-  id: "6",
-  title: "Payday (SFU TA Ship)",
-  start: new Date(2026, 2, 12, 9, 0),
-  end: new Date(2026, 2, 12, 9, 5),
-  type: "income",
-  predictedCost: 1150,
-  status: "safe"
-},
-{
-  id: "7",
-  title: "Cypress Ski Day",
-  start: new Date(2026, 2, 14, 7, 0),
-  end: new Date(2026, 2, 14, 17, 0),
-  type: "social",
-  predictedCost: 145,
-  status: "warning"
-},
-{
-  id: "8",
-  title: "Phone Bill (Fido)",
-  start: new Date(2026, 2, 18, 10, 0),
-  end: new Date(2026, 2, 18, 10, 5),
-  type: "bill",
-  predictedCost: 65,
-  status: "safe"
-},
-{
-  id: "9",
-  title: "Payday (SFU TA Ship)",
-  start: new Date(2026, 2, 26, 9, 0),
-  end: new Date(2026, 2, 26, 9, 5),
-  type: "income",
-  predictedCost: 1150,
-  status: "safe"
-},
-{
-  id: "10",
-  title: "Granville Night Out",
-  start: new Date(2026, 2, 27, 21, 0),
-  end: new Date(2026, 2, 28, 1, 30),
-  type: "social",
-  predictedCost: 180,
-  status: "danger"
-},{
-  id:  "11",
-  title: "April Rent",
-  start: new Date(2026, 3, 1, 0, 5),
-  end: new Date(2026, 3, 1, 0, 10),
-  type: "fixed",
-  predictedCost: 1950,
-  status: "expected"
-},
-{
-  id: "12",
-  title: "Internet (Shaw)",
-  start: new Date(2026, 3, 2, 9, 0),
-  end: new Date(2026, 3, 2, 9, 5),
-  type: "bill",
-  predictedCost: 85,
-  status: "safe"
-},
-{
-  id: "13",
-  title: "Costco Run",
-  start: new Date(2026, 3, 5, 16, 0),
-  end: new Date(2026, 3, 5, 17, 30),
-  type: "essential",
-  predictedCost: 138,
-  status: "safe"
-},
-{
-  id: "14",
-  title: "Payday (SFU TA Ship)",
-  start: new Date(2026, 3, 9, 9, 0),
-  end: new Date(2026, 3, 9, 9, 5),
-  type: "income",
-  predictedCost: 1150,
-  status: "safe"
-},
-{
-  id: "15",
-  title: "Coachella Livestream Party Supplies",
-  start: new Date(2026, 3, 17, 18, 0),
-  end: new Date(2026, 3, 17, 19, 0),
-  type: "social",
-  predictedCost: 95,
-  status: "warning"
-},
-{
-  id: "16",
-  title: "Payday (SFU TA Ship)",
-  start: new Date(2026, 3, 23, 9, 0),
-  end: new Date(2026, 3, 23, 9, 5),
-  type: "income",
-  predictedCost: 1150,
-  status: "safe"
-},
-{
-  id: "17",
-  title: "May Rent",
-  start: new Date(2026, 4, 1, 0, 5),
-  end: new Date(2026, 4, 1, 0, 10),
-  type: "fixed",
-  predictedCost: 1950,
-  status: "expected"
-},
-{
-  id: "18",
-  title: "Victoria Weekend Trip (Ferry + Stay)",
-  start: new Date(2026, 4, 15, 8, 0),
-  end: new Date(2026, 4, 17, 20, 0),
-  type: "social",
-  predictedCost: 420,
-  status: "danger"
-},
-{
-  id: "19",
-  title: "Payday (SFU TA Ship)",
-  start: new Date(2026, 4, 21, 9, 0),
-  end: new Date(2026, 4, 21, 9, 5),
-  type: "income",
-  predictedCost: 1150,
-  status: "safe"
-}
-    ],
-
-    // --- NEW CRUD ACTIONS FOR YOUR UI ---
-    addEvent: (newEvent: any) => set((state: any) => ({
-        events: [...state.events, { ...newEvent, id: Math.random().toString(36).substr(2, 9) }]
+  user: {
+    name: 'Alex',
+    currentBalance: 850,
+    safeToSpend: 142.50,
+  },
+  events: seedEvents as AppEvent[],
+  isFractured: false,
+  ghostEvents: [],
+  proposedEvents: [],
+  
+  addEvent: (event) =>
+    set((state) => ({
+      events: [
+        ...state.events,
+        { ...event, id: `event-${++eventIdCounter}` },
+      ],
     })),
 
-    removeEvent: (eventId: string) => set((state: any) => ({
-        events: state.events.filter((e: any) => e.id !== eventId)
+  removeEvent: (id) =>
+    set((state) => ({
+      events: state.events.filter((e) => e.id !== id),
     })),
 
-    clearAllEvents: () => set({ events: [] }),
+  clearAllEvents: () => set({ events: [] }),
 
-    resolveEvent: (eventId: string, savedAmount: number) => set((state: any) => ({
-        events: state.events.map((e: any) =>
-            e.id === eventId ? { ...e, status: 'safe', predictedCost: e.predictedCost - savedAmount } : e
-        ),
-        user: { ...state.user, safeToSpend: state.user.safeToSpend + savedAmount }
-    }))
+  resolveEvent: (id, savedAmount) =>
+    set((state) => ({
+      events: state.events.map((e) =>
+        e.id === id ? { ...e, status: 'safe' as const, resolved: true } : e
+      ),
+      user: {
+        ...state.user,
+        currentBalance: state.user.currentBalance + savedAmount,
+        safeToSpend: state.user.safeToSpend + savedAmount,
+      },
+    })),
+
+  fractureTimeline: () =>
+    set((state) => {
+      const emergencyEvent = {
+        id: 'fracture-car-tow',
+        title: '🚗 Emergency Car Tow',
+        start: new Date(2026, 1, 28, 12, 0), // noon today
+        type: 'variable' as const,
+        predictedCost: 300,
+        status: 'danger' as const,
+      };
+
+      // The Golden Path: What the AI suggests to save the timeline
+      const healedEvents = state.events
+          .filter((e) => e.id !== 'granville-night') // Cancelled
+          .map((e) => e.id === 'earls-dinner' 
+              ? { ...e, title: 'Coffee Meetup ☕', predictedCost: 15, status: 'safe' as const } 
+              : e);
+
+      const proposed = [
+        ...healedEvents,
+        emergencyEvent, // The tow still happens!
+        { id: 'cineplex-tuesday', title: '🎬 Cineplex Movie Night', start: new Date(2026, 2, 3), type: 'variable' as const, predictedCost: 15, status: 'safe' as const },
+        { id: 'soccer-dropin', title: '⚽ Local Drop-in Soccer', start: new Date(2026, 2, 4), type: 'variable' as const, predictedCost: 10, status: 'safe' as const },
+      ];
+
+      return {
+        isFractured: true,
+        ghostEvents: [...state.events],
+        events: [...state.events, emergencyEvent],
+        proposedEvents: proposed,
+        user: { ...state.user, currentBalance: state.user.currentBalance - 300, safeToSpend: state.user.safeToSpend - 300 },
+      };
+    }),
+
+  healTimeline: () =>
+    set((state) => ({
+      isFractured: false,
+      ghostEvents: [],
+      events: state.proposedEvents, // Just adopt the golden path
+      proposedEvents: [],
+      user: { ...state.user, currentBalance: state.user.currentBalance + 225, safeToSpend: state.user.safeToSpend + 225 },
+    })),
 }));
