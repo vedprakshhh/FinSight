@@ -10,12 +10,24 @@ import { ChevronLeft, ChevronRight, Plus, Activity } from 'lucide-react';
 import { FinancialLine } from './FinancialLine';
 import { EventForm } from './EventForm';
 import { EventList } from './EventList';
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
+import { useEffect, useRef } from 'react';
 
 // --- MAIN WRAPPER ---
-export default function ThreeWave({ showGoldenPath = false, onNodeClick }: { showGoldenPath?: boolean, onNodeClick?: (event: any) => void }) {
+export default function ThreeWave({ showGoldenPath = false, onNodeClick, resetTrigger = 0 }: { showGoldenPath?: boolean, onNodeClick?: (event: any) => void, resetTrigger?: number }) {
     const [timelineStart, setTimelineStart] = useState(new Date(2026, 1, 28));
     const [showForm, setShowForm] = useState(false);
     const { events } = useStore();
+    const controlsRef = useRef<OrbitControlsImpl>(null);
+
+    useEffect(() => {
+        if (resetTrigger > 0) {
+            setTimelineStart(new Date(2026, 1, 28));
+            if (controlsRef.current) {
+                controlsRef.current.reset();
+            }
+        }
+    }, [resetTrigger]);
 
     const periodStats = useMemo(() => {
         const viewEndTime = timelineStart.getTime() + 14 * 86400000;
@@ -37,10 +49,10 @@ export default function ThreeWave({ showGoldenPath = false, onNodeClick }: { sho
     }, [periodStats]);
 
     return (
-        <div className="w-full h-full bg-[#020617] rounded-lg overflow-hidden relative shadow-2xl border border-slate-800 flex flex-col">
+        <div className="w-full h-full bg-[#020617] overflow-hidden relative flex flex-col">
             <div className="absolute top-0 left-0 w-full p-5 flex justify-between items-start z-10 pointer-events-none">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-1 my-10">
                         <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
                         <div className="text-xs uppercase tracking-widest text-slate-400 font-bold">Timeline Health</div>
                     </div>
@@ -52,7 +64,7 @@ export default function ThreeWave({ showGoldenPath = false, onNodeClick }: { sho
                     </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-3 pointer-events-auto">
+                <div className="flex flex-col items-end gap-3 pointer-events-auto my-12">
                     <div className="flex bg-slate-900/80 backdrop-blur-md border border-slate-700 rounded-lg overflow-hidden shadow-xl">
                         <button onClick={() => setTimelineStart(subDays(timelineStart, 14))} className="p-2.5 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border-r border-slate-700"><ChevronLeft size={16} /></button>
                         <div className="px-5 py-2.5 text-sm font-semibold text-slate-200 min-w-[150px] text-center font-mono">
@@ -68,7 +80,7 @@ export default function ThreeWave({ showGoldenPath = false, onNodeClick }: { sho
 
             <Canvas
                 camera={{ position: [0, 0, 10], fov: 55 }}
-                className="w-full h-full pb-20"
+                className="w-full h-full"
                 dpr={[1, 2]}
                 gl={{ antialias: true, alpha: true }}
             >
@@ -77,10 +89,10 @@ export default function ThreeWave({ showGoldenPath = false, onNodeClick }: { sho
                 <EffectComposer>
                     <Bloom luminanceThreshold={0.5} mipmapBlur intensity={1.5} />
                 </EffectComposer>
-                <OrbitControls enableZoom={false} enablePan={false} minPolarAngle={Math.PI / 2.5} maxPolarAngle={Math.PI / 1.5} autoRotate={false} />
-                <Environment preset="night" />
+                <OrbitControls ref={controlsRef} enableZoom={false} enablePan={false} minPolarAngle={Math.PI / 2.5} maxPolarAngle={Math.PI / 1.5} autoRotate={false} />
+                <Environment preset="city" />
             </Canvas>
-            <EventList />
+            <EventList timelineStart={timelineStart} daysShown={14} />
             {showForm && <EventForm onClose={() => setShowForm(false)} />}
         </div>
     );

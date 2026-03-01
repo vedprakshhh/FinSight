@@ -1,7 +1,7 @@
 "use client";
 
 import ThreeWave from '@/src/components/ThreeWave';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useStore } from '@/src/store/useStore';
 import {
   Dialog,
@@ -16,6 +16,7 @@ import { Sparkles, Volume2, Zap, Loader2 } from 'lucide-react';
 import IncomingInviteModal from '@/src/components/IncomingInviteModal';
 import SyncCalendarButton from '@/src/components/SyncCalendarButton';
 import { VoiceBot } from '@/src/components/VoiceBot';
+import { BadgeSystem } from '@/src/components/BadgeSystem';
 
 export default function Dashboard() {
   const {
@@ -25,7 +26,66 @@ export default function Dashboard() {
     isFractured,
     fractureTimeline,
     healTimeline,
+    hydrateFromDatabase,
   } = useStore();
+
+  const [isDbLoading, setIsDbLoading] = useState(true);
+
+  // --- AUTOMATIC SNOWFLAKE HYDRATION ---
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const response = await fetch('/api/data');
+        if (!response.ok) throw new Error("Failed to fetch Snowflake data");
+
+        const data = await response.json();
+
+        // 1. Hardcode User Data (since we only fetch events from DB now)
+        const mappedUser = {
+          name: 'Alex',
+          currentBalance: 850.00,
+          safeToSpend: 142.50
+        };
+
+        // 2. Map the granular timeline events strictly from UPCOMING_EVENTS
+        const mappedEvents = data.events.map((event: any) => {
+          let eventType = 'variable';
+          let eventStatus = 'expected';
+
+          if (event.PRIORITY === 'Income') {
+            eventType = 'income';
+            eventStatus = 'safe';
+          } else if (event.PRIORITY === 'Critical') {
+            eventType = 'fixed';
+            eventStatus = event.COST > 500 ? 'danger' : 'warning';
+          } else {
+            eventType = 'variable';
+            eventStatus = event.COST > 100 ? 'warning' : 'expected';
+          }
+
+          return {
+            id: event.EVENT_ID || `sf-${Math.random()}`,
+            title: event.EVENT_NAME,
+            // Appending time ensures dates don't shift backwards due to local timezones
+            start: new Date(event.EVENT_DATE + 'T12:00:00Z'),
+            type: eventType,
+            predictedCost: event.COST,
+            status: eventStatus
+          };
+        });
+
+        // 3. Inject into Global Store
+        hydrateFromDatabase(mappedUser, mappedEvents);
+
+      } catch (error) {
+        console.error("Snowflake Auto-Sync Failed:", error);
+      } finally {
+        setIsDbLoading(false); // Remove loading screen
+      }
+    };
+
+    fetchInitialData();
+  }, [hydrateFromDatabase]);
 
   // Event click modal
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
@@ -44,6 +104,9 @@ export default function Dashboard() {
   // Rebalancer modal
   const [showRebalanceModal, setShowRebalanceModal] = useState(false);
   const [fractureStage, setFractureStage] = useState<'idle' | 'impact' | 'calculating' | 'rebalance'>('idle');
+
+  // Camera reset
+  const [resetTrigger, setResetTrigger] = useState(0);
 
   const handleInviteFound = (eventData: any) => {
     setRealInviteData(eventData);
@@ -125,19 +188,41 @@ export default function Dashboard() {
     }
   };
 
-  
+
   return (
     <div className="relative w-screen h-screen bg-slate-950 overflow-hidden flex flex-col">
 
-      {/* Top Bar */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-slate-800 flex-shrink-0">
-        <div className="flex items-center gap-3">
+      {/* CINEMATIC LOADING OVERLAY */}
+      {isDbLoading && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 backdrop-blur-md">
+          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
+          <p className="text-indigo-400 font-bold uppercase tracking-widest text-sm animate-pulse">
+            Syncing Secure Financial Data via Snowflake...
+          </p>
+        </div>
+      )}
+
+      {/* Full Screen 3D Timeline as true background */}
+      <div className="absolute inset-0 z-0">
+        <ThreeWave
+          showGoldenPath={fractureStage === 'calculating' || fractureStage === 'rebalance'}
+          onNodeClick={handleEventClick}
+          resetTrigger={resetTrigger}
+        />
+      </div>
+
+      {/* Top Bar (Overlay) */}
+      <div className="relative z-10 flex items-center justify-between px-6 py-3 flex-shrink-0">
+        <div
+          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => setResetTrigger(t => t + 1)}
+        >
           <span className="text-white font-black text-lg tracking-tight">FutureSpend</span>
           <span className="text-slate-600 text-xs">by Team FutureSpend</span>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-right">
+          <div className="text-right ">
             <p className="text-slate-500 text-xs">Safe to Spend</p>
             <p className={`font-black text-xl ${user.safeToSpend < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
               ${user.safeToSpend.toFixed(2)}
@@ -156,15 +241,14 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
-
-      {/* Full Screen 3D Timeline */}
-      <div className="flex-1 min-h-0 p-4">
-        <ThreeWave showGoldenPath={fractureStage === 'calculating' || fractureStage === 'rebalance'} onNodeClick={handleEventClick} />
-      </div>
       {/* Floating Voice Bot Icon */}
-      <div className="fixed bottom-28 right-8 z-50">
+      <div className="fixed bottom-2 right-4 z-50">
         <VoiceBot />
       </div>
+      <div className="fixed bottom-4 left-6 z-50">
+        <BadgeSystem />
+      </div>
+
       {/* ========== GOLDEN REBALANCE BUTTON ========== */}
       {fractureStage === 'calculating' && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-slate-900 border border-amber-500/50 rounded-full text-amber-400 font-bold animate-pulse shadow-[0_0_30px_rgba(245,158,11,0.2)]">

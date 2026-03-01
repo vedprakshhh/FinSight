@@ -251,12 +251,11 @@ export function FinancialLine({ startDate, showGoldenPath = false, onNodeClick }
                             onClick={(e) => { e.stopPropagation(); if (onNodeClick) onNodeClick(marker); }}
                         >
                             {marker.status === 'danger' ? (
-                                <Float speed={4} rotationIntensity={2} floatIntensity={1}>
-                                    <mesh><icosahedronGeometry args={[isHovered ? 0.4 : 0.3, 0]} /><meshBasicMaterial color={[5, 0, 0]} wireframe toneMapped={false} /></mesh>
-                                    <Sparkles count={40} scale={1.5} size={3} speed={0.8} color={new THREE.Color(5, 0, 0)} />
+                                <Float speed={1} rotationIntensity={2} floatIntensity={1}>
+                                    <mesh><icosahedronGeometry args={[isHovered ? 0.2 : 0.15, 0]} /><meshBasicMaterial color={[5, 0, 0]} wireframe toneMapped={false} /></mesh>
                                 </Float>
                             ) : marker.status === 'warning' ? (
-                                <Float speed={2} rotationIntensity={0} floatIntensity={0.5}>
+                                <Float speed={1} rotationIntensity={0} floatIntensity={0.5}>
                                     <mesh><octahedronGeometry args={[isHovered ? 0.2 : 0.15]} /><meshBasicMaterial color={[2, 2, 0]} toneMapped={false} /></mesh>
                                 </Float>
                             ) : (
