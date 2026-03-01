@@ -133,27 +133,27 @@ FinSight is built using modern, high-performance web technologies.
 
 ### Framework
 
-Next.js 16 (App Router)
+*Next.js 16 (App Router)
 
 ### Frontend
 
-React 19
-TypeScript
-Tailwind CSS v4
-shadcn/ui and Radix UI
-Lucide Icons
+* React 19
+* TypeScript
+* Tailwind CSS v4
+* shadcn/ui and Radix UI
+* Lucide Icons
 
 ### 3D Visualization
 
-Three.js
-React Three Fiber
-@react-three/drei
+* Three.js
+* React Three Fiber
+* @react-three/drei
 
 ### State & Logic
 
-Zustand
-date-fns
-react-big-calendar
+* Zustand
+* date-fns
+* react-big-calendar
 
 ### Artificial Intelligence
 
