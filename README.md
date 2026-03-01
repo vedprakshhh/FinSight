@@ -174,7 +174,7 @@ ElevenLabs Turbo v2.5
 
 DigitalOcean App Platform
 
-### Data Layer
+### Data Layer/Database 
 
 Snowflake
 
