@@ -97,7 +97,7 @@ export default function IncomingInviteModal({ isOpen, onClose }: { isOpen: boole
 
                     <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm">
-                            <Sparkles className="h-4 w-4" /> FutureSpend AI Analysis
+                            <Sparkles className="h-4 w-4" /> FinSight AI Analysis
                         </div>
 
                         {/* ELEVENLABS BUTTON */}

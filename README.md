@@ -1,6 +1,6 @@
-# FutureSpend 🔮
+# FinSight 🔮
 
-FutureSpend is an advanced, AI-powered financial dashboard that visualizes your money not just as numbers, but as a living, breathing timeline. It anticipates expenses, visualizes budget health in 3D space, and uses generative AI to instantly re-route your spending when life throws a curveball.
+FinSight is an advanced, AI-powered financial dashboard that visualizes your money not just as numbers, but as a living, breathing timeline. It anticipates expenses, visualizes budget health in 3D space, and uses generative AI to instantly re-route your spending when life throws a curveball.
 
 ## 🚀 Key Functionalities
 
@@ -30,7 +30,7 @@ A core feature that protects your financial mental health.
 
 ## 🛠 Tech Stack
 
-FutureSpend is built top-to-bottom with modern, high-performance web technologies:
+FinSight is built top-to-bottom with modern, high-performance web technologies:
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
 - **Library**: [React 19](https://react.dev/)

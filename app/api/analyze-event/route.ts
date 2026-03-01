@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const ai = new GoogleGenAI({ apiKey });
 
     const prompt = `
-You are FutureSpend, an AI agent for budgeting around calendar events.
+You are FinSight, an AI agent for budgeting around calendar events.
 
 Context:
 - Event: ${eventTitle}

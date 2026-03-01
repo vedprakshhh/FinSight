@@ -217,8 +217,8 @@ export default function Dashboard() {
           className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => setResetTrigger(t => t + 1)}
         >
-          <span className="text-white font-black text-lg tracking-tight">FutureSpend</span>
-          <span className="text-slate-600 text-xs">by Team FutureSpend</span>
+          <span className="text-white font-black text-lg tracking-tight">FinSight</span>
+          <span className="text-slate-600 text-xs">by Team FinSight</span>
         </div>
 
         <div className="flex items-center gap-4">
