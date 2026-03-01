@@ -133,7 +133,7 @@ FinSight is built using modern, high-performance web technologies.
 
 ### Framework
 
-*Next.js 16 (App Router)
+* Next.js 16 (App Router)
 
 ### Frontend
 
@@ -172,11 +172,11 @@ ElevenLabs Turbo v2.5
 
 ### Deployment
 
-DigitalOcean App Platform
+
 
 ### Data Layer/Database 
 
-Snowflake
+* Snowflake
 
 ---
 
@@ -250,7 +250,7 @@ Numbers → Narrative
 
 FinSight doesn’t just track your money.
 
-It manages your financial life around your real life.
+It manages your financial life around your day-to-day activities.
 
 ---
 
