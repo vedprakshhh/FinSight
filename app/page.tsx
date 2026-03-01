@@ -15,6 +15,7 @@ import { Badge } from "@/src/ui/badge";
 import { Sparkles, Volume2, Zap, Loader2 } from 'lucide-react';
 import IncomingInviteModal from '@/src/components/IncomingInviteModal';
 import SyncCalendarButton from '@/src/components/SyncCalendarButton';
+import { VoiceBot } from '@/src/components/VoiceBot';
 
 export default function Dashboard() {
   const {
@@ -124,6 +125,7 @@ export default function Dashboard() {
     }
   };
 
+  
   return (
     <div className="relative w-screen h-screen bg-slate-950 overflow-hidden flex flex-col">
 
@@ -159,7 +161,10 @@ export default function Dashboard() {
       <div className="flex-1 min-h-0 p-4">
         <ThreeWave showGoldenPath={fractureStage === 'calculating' || fractureStage === 'rebalance'} onNodeClick={handleEventClick} />
       </div>
-
+      {/* Floating Voice Bot Icon */}
+      <div className="fixed bottom-28 right-8 z-50">
+        <VoiceBot />
+      </div>
       {/* ========== GOLDEN REBALANCE BUTTON ========== */}
       {fractureStage === 'calculating' && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-slate-900 border border-amber-500/50 rounded-full text-amber-400 font-bold animate-pulse shadow-[0_0_30px_rgba(245,158,11,0.2)]">
