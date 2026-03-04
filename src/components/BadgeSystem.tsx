@@ -160,8 +160,13 @@ const BADGE_DEFS: BadgeDef[] = [
                 if (e.type === 'income') income += e.predictedCost;
                 else expenses += e.predictedCost;
             });
-            const ratio = expenses === 0 ? 2 : Math.min(income / expenses, 2);
-            const health = Math.round(ratio * 50);
+            let health = 100;
+            if (expenses > 0) {
+                const ratio = income / expenses;
+                if (ratio >= 1.25) health = 100;
+                else if (ratio >= 1) health = Math.round(50 + ((ratio - 1) / 0.25) * 50);
+                else health = Math.round(ratio * 50);
+            }
             const earned = health >= 80 && events.length >= 3;
             return { earned, progress: health, total: 100, detail: `Health: ${health}%` };
         },

@@ -207,8 +207,8 @@ export function FinancialLine({ startDate, showGoldenPath = false, onNodeClick }
                 return (
                     <group key={`y-axis-${yOffset}`}>
                         <Line points={[new THREE.Vector3(-12, yOffset, -2.5), new THREE.Vector3(12, yOffset, -2.5)]} color="#1e293b" lineWidth={1.5} dashed={true} dashScale={5} transparent opacity={0.5} />
-                        <Html position={[-8.8, yOffset - 0.2, 0]} center distanceFactor={10} zIndexRange={[1, 0]}>
-                            <span className="text-[10px] text-slate-500/60 font-mono whitespace-nowrap pr-2">
+                        <Html position={[-8.8, yOffset + 0.1, 0]} center distanceFactor={10} zIndexRange={[1, 0]}>
+                            <span className="text-xs text-slate-500/60 font-mono whitespace-nowrap pr-2">
                                 ${balanceVal.toLocaleString()}
                             </span>
                         </Html>
@@ -222,8 +222,8 @@ export function FinancialLine({ startDate, showGoldenPath = false, onNodeClick }
                 return (
                     <group key={`x-axis-${i}`}>
                         <Line points={[new THREE.Vector3(xPos, -4, -2.5), new THREE.Vector3(xPos, 4, -2.5)]} color="#1e293b" lineWidth={1} dashed={true} dashScale={5} transparent opacity={0.3} />
-                        <Html position={[xPos, -3.8, 0]} center distanceFactor={10} zIndexRange={[1, 0]}>
-                            <span className="text-[10px] sm:text-[11px] text-slate-500 font-mono whitespace-nowrap opacity-75">
+                        <Html position={[xPos, -3.3, 0]} center distanceFactor={10} zIndexRange={[1, 0]}>
+                            <span className="text-xs sm:text-sm text-slate-500 font-mono whitespace-nowrap opacity-75">
                                 {format(addDays(startDate, i), 'MM/dd')}
                             </span>
                         </Html>

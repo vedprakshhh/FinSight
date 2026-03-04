@@ -43,8 +43,11 @@ export default function ThreeWave({ showGoldenPath = false, onNodeClick, resetTr
     }, [events, timelineStart]);
 
     const healthPercent = useMemo(() => {
-        if (periodStats.expenses === 0) return 100;
-        const ratio = Math.min(periodStats.income / periodStats.expenses, 2);
+        const { income, expenses } = periodStats;
+        if (expenses === 0) return 100;
+        const ratio = income / expenses;
+        if (ratio >= 1.25) return 100;
+        if (ratio >= 1) return Math.round(50 + ((ratio - 1) / 0.25) * 50);
         return Math.round(ratio * 50);
     }, [periodStats]);
 
@@ -56,7 +59,7 @@ export default function ThreeWave({ showGoldenPath = false, onNodeClick, resetTr
                         <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
                         <div className="text-xs uppercase tracking-widest text-slate-400 font-bold">Timeline Health</div>
                     </div>
-                    <div className={`text-4xl font-black tracking-tighter drop-shadow-lg ${healthPercent >= 100 ? 'text-emerald-400' : healthPercent >= 50 ? 'text-amber-400' : 'text-red-400'}`}>
+                    <div className={`text-4xl font-black tracking-tighter drop-shadow-lg ${healthPercent >= 80 ? 'text-emerald-400' : healthPercent >= 50 ? 'text-amber-400' : 'text-red-400'}`}>
                         {healthPercent}%
                     </div>
                     <div className="text-xs font-mono text-slate-500 mt-2 bg-slate-950/60 p-1.5 rounded inline-block backdrop-blur-md border border-slate-800">

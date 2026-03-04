@@ -166,9 +166,10 @@ export default function Dashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: selectedEvent.title,
-          cost: selectedEvent.predictedCost,
-          balance: user.currentBalance,
+          eventTitle: selectedEvent.title,
+          predictedCost: selectedEvent.predictedCost,
+          currentBalance: user.currentBalance,
+          safeToSpend: user.safeToSpend,
         }),
       });
       if (!response.ok) throw new Error('API failed');

@@ -44,7 +44,7 @@ export function EventList({ timelineStart, daysShown = 14 }: { timelineStart: Da
     return (
         <div className="absolute bottom-0 left-0 right-0 bg-transparent flex flex-col items-center pointer-events-none z-50">
             {/* Control Bar */}
-            <div className="p-2 flex items-center justify-center gap-3 bg-slate-950/80 backdrop-blur-md rounded-t-xl border-t border-x border-slate-800 pointer-events-auto">
+            <div className="p-2 flex items-center justify-center gap-3 bg-transparent rounded-t-xl border-t border-x border-slate-800 pointer-events-auto">
                 <button onClick={() => setIsExpanded(!isExpanded)} className="flex items-center gap-1 text-xs px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition-colors border border-slate-700">
                     {isExpanded ? <><ChevronDown size={14} /> Hide Pebbles</> : <><ChevronUp size={14} /> Show Pebbles</>}
                 </button>
@@ -56,7 +56,7 @@ export function EventList({ timelineStart, daysShown = 14 }: { timelineStart: Da
 
             {/* Expanded List */}
             {isExpanded && (
-                <div className="w-full bg-slate-950/90 backdrop-blur-md border-t border-slate-800 max-h-48 overflow-y-auto pointer-events-auto">
+                <div className="w-full bg-transparent border-t border-slate-800 max-h-48 overflow-y-auto pointer-events-auto">
                     <div className="p-3 flex flex-wrap justify-center gap-2">
                         {visibleEvents.map((event: any) => (
                             <div key={event.id} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs border ${event.type === 'income' ? 'bg-emerald-950/30 text-emerald-400 border-emerald-900/50' :

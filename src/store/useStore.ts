@@ -97,24 +97,60 @@ export const useStore = create<StoreState>((set) => ({
     proposedEvents: [],
 
     addEvent: (event) =>
-        set((state) => ({
-            events: [
-                ...state.events,
-                { ...event, id: `event-${++eventIdCounter}` },
-            ],
-        })),
+        set((state) => {
+            const costDelta = event.type === 'income' ? event.predictedCost : -event.predictedCost;
+            return {
+                events: [
+                    ...state.events,
+                    { ...event, id: `event-${++eventIdCounter}` },
+                ],
+                user: {
+                    ...state.user,
+                    currentBalance: state.user.currentBalance + costDelta,
+                    safeToSpend: state.user.safeToSpend + costDelta
+                }
+            };
+        }),
 
     updateEvent: (id, updates) =>
-        set((state) => ({
-            events: state.events.map((e) =>
-                e.id === id ? { ...e, ...updates } : e
-            ),
-        })),
+        set((state) => {
+            const oldEvent = state.events.find(e => e.id === id);
+            if (!oldEvent) return state;
+
+            let oldCostDelta = oldEvent.type === 'income' ? oldEvent.predictedCost : -oldEvent.predictedCost;
+            let newType = updates.type !== undefined ? updates.type : oldEvent.type;
+            let newCost = updates.predictedCost !== undefined ? updates.predictedCost : oldEvent.predictedCost;
+            let newCostDelta = newType === 'income' ? newCost : -newCost;
+            let diff = newCostDelta - oldCostDelta;
+
+            return {
+                events: state.events.map((e) =>
+                    e.id === id ? { ...e, ...updates } : e
+                ),
+                user: {
+                    ...state.user,
+                    currentBalance: state.user.currentBalance + diff,
+                    safeToSpend: state.user.safeToSpend + diff
+                }
+            };
+        }),
 
     removeEvent: (id) =>
-        set((state) => ({
-            events: state.events.filter((e) => e.id !== id),
-        })),
+        set((state) => {
+            const oldEvent = state.events.find(e => e.id === id);
+            if (!oldEvent) return state;
+
+            let oldCostDelta = oldEvent.type === 'income' ? oldEvent.predictedCost : -oldEvent.predictedCost;
+
+            return {
+                events: state.events.filter((e) => e.id !== id),
+                user: {
+                    ...state.user,
+                    currentBalance: state.user.currentBalance - oldCostDelta,
+                    safeToSpend: state.user.safeToSpend - oldCostDelta
+                }
+            };
+        }),
 
     clearAllEvents: () => set({ events: [] }),
 

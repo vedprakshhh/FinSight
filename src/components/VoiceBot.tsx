@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from 'react';
-import { Mic, Loader2, Check, Send } from 'lucide-react';
+import { Mic, Loader2, Check, Send, Keyboard } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { motion, useDragControls } from 'framer-motion';
 
@@ -96,22 +96,38 @@ export function VoiceBot() {
                 </div>
             )}
 
-            {/* Main Toggle Button */}
-            <button
-                onPointerDown={(e) => {
-                    // Only click if we didn't drag
-                    if (status === 'idle') startRecording();
-                }}
-                className={`w-16 h-16 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.5)] pointer-events-auto ${status === 'listening' ? 'bg-red-600 border-red-400 animate-pulse' :
+            <div className="flex items-center gap-3">
+                {/* Manual Entry Button */}
+                {status === 'idle' && (
+                    <button
+                        onPointerDown={(e) => {
+                            e.stopPropagation();
+                            setTranscript("");
+                            setStatus('confirming');
+                        }}
+                        className="w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-lg pointer-events-auto bg-slate-900 border-slate-700 hover:border-indigo-500 hover:bg-slate-800"
+                    >
+                        <Keyboard className="text-slate-400" size={20} />
+                    </button>
+                )}
+
+                {/* Main Toggle Button */}
+                <button
+                    onPointerDown={(e) => {
+                        // Only click if we didn't drag
+                        if (status === 'idle') startRecording();
+                    }}
+                    className={`w-16 h-16 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-[0_0_30px_rgba(0,0,0,0.5)] pointer-events-auto ${status === 'listening' ? 'bg-red-600 border-red-400 animate-pulse' :
                         status === 'processing' ? 'bg-slate-800 border-indigo-500 animate-spin' :
                             'bg-slate-900 border-slate-700 hover:border-indigo-500 hover:bg-slate-800'
-                    }`}
-            >
-                {status === 'listening' ? <Mic className="text-white" /> :
-                    status === 'processing' ? <Loader2 className="text-indigo-400" /> :
-                        status === 'success' ? <Check className="text-emerald-400" /> :
-                            <Mic className="text-slate-400" />}
-            </button>
+                        }`}
+                >
+                    {status === 'listening' ? <Mic className="text-white" /> :
+                        status === 'processing' ? <Loader2 className="text-indigo-400" /> :
+                            status === 'success' ? <Check className="text-emerald-400" /> :
+                                <Mic className="text-slate-400" />}
+                </button>
+            </div>
         </motion.div>
     );
 }
